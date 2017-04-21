@@ -1,0 +1,38 @@
+version: '2'
+
+services: 
+  mysql:
+    image: mysql:5.7 
+    container_name: sage-mysql
+    volumes: 
+      - db-data:/var/lib/mysql
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks:
+      - wp-network
+
+  wordpress:
+    image: emanuelsan/wp-cli:latest 
+    container_name: sage-wp
+    depends_on:
+      - mysql
+    ports: 
+      - "80:80"
+    restart: always
+    environment: 
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_PASSWORD: wordpress
+    networks:
+      - wp-network
+    volumes:
+      - ./html:/var/www/html
+
+volumes: 
+  db-data:
+
+networks:
+  wp-network:
